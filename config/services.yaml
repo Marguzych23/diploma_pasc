@@ -25,3 +25,19 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # data loader
+    App\Service\DataLoadService:
+        autowire: true
+
+    # add parsers
+    App\Parser\RFBRParser: ~
+
+    App\Parser\Parser: '@App\Parser\RFBRParser'
+
+    # services
+    App\Sevice\Competition\RFBRService: ~
+
+    App\Sevice\Competition\BaseService: '@App\Sevice\Competition\RFBRService'
+
+    App\Sevice\SubscribeService: ~

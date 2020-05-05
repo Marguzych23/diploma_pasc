@@ -181,11 +181,20 @@ class Competition implements JsonSerializable
      */
     public function jsonSerialize()
     {
+        $industries = [];
+
+        foreach ($this->getIndustries()->toArray() as $industry) {
+            if ($industry instanceof Industry) {
+                $industries[] = $industry->getName();
+            }
+        }
+
         return [
             'name'       => $this->getName(),
             'grant_size' => $this->getGrantSize(),
             'url'        => $this->getUrl(),
             'deadline'   => $this->getDeadline(),
+            'industries' => $industries,
         ];
     }
 

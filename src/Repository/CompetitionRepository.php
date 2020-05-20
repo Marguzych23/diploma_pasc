@@ -30,6 +30,7 @@ class CompetitionRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param DateTime|null $updateDate
      * @param DateTime|null $deadlineStart
      * @param DateTime|null $deadlineEnd
      * @param array         $industries
@@ -37,13 +38,18 @@ class CompetitionRepository extends ServiceEntityRepository
      * @return mixed
      */
     public function getCompetitionsBy(
-        ?DateTime $deadlineStart = null, ?DateTime $deadlineEnd = null, array $industries = []
+        ?DateTime $updateDate = null, ?DateTime $deadlineStart = null, ?DateTime $deadlineEnd = null, array $industries = []
     ) {
         $query = $this->_em->getRepository(Competition::class)
             ->createQueryBuilder('c')
             ->orderBy('c.deadline', 'ASC');
 
         $parameters = [];
+
+        if ($updateDate !== null) {
+            $query->andWhere('c.updateDate >= :updateDate');
+            $parameters['updateDate'] = $updateDate;
+        }
 
         if ($deadlineStart !== null) {
             $query->andWhere('c.deadline >= :deadlineStart');

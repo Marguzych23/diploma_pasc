@@ -97,9 +97,14 @@ class ApiController extends AbstractController
             if ($apiService->checkApp($appName, $token) === true) {
                 $competitions = $request->get('competitions');
                 $emails       = $request->get('emails');
+                $date         = $request->get('time');
+
+                if ($date !== null) {
+                    $date = (new \DateTime())->setTimestamp((int) $date);
+                }
 
                 if ($competitions !== null) {
-                    $result['$competitions'] = $apiService->getActualCompetitions($appName);
+                    $result['competitions'] = $apiService->getCompetitions($appName, $date);
                 }
                 if ($emails !== null) {
                     $result['emails'] = $apiService->getNotifyEmails($appName);

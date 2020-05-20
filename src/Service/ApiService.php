@@ -138,11 +138,12 @@ class ApiService
 
 
     /**
-     * @param string $appName
+     * @param string        $appName
+     * @param DateTime|null $date
      *
      * @return array
      */
-    public function getActualCompetitions(string $appName)
+    public function getCompetitions(string $appName, ?DateTime $date = null)
     {
         $competitions = [];
 
@@ -150,7 +151,7 @@ class ApiService
 
         $temp = $this->entityManager
             ->getRepository(Competition::class)
-            ->getCompetitionsBy($apiSubscriber->getLastGetAllDate());
+            ->getCompetitionsBy($date ?? $apiSubscriber->getLastGetAllDate());
         if ($temp !== null) {
             $competitions = $temp;
             $apiSubscriber->setLastGetAllDate(new DateTime());

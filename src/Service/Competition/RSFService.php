@@ -44,7 +44,7 @@ class RSFService extends BaseService
         $needle  = '<div class="container">';
         $content =
             '<!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>test</title></head><body>'
-            . trim(substr($content, strrpos($content, $needle) - 1))
+            . $content
             . '</body></html>';
         $crawler = new Crawler();
         $crawler->addHtmlContent($content, 'utf-8');

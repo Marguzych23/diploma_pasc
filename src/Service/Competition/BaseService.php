@@ -21,6 +21,8 @@ abstract class BaseService
 
     protected ?SupportSite $supportSite = null;
 
+    private ?string $siteUrl = null;
+
     /**
      * BaseService constructor.
      *
@@ -63,15 +65,28 @@ abstract class BaseService
     /**
      * @param string|null $url
      *
+     * @return Competition
      * @throws CompetitionException
      */
-    public function addCompetitionByURL(?string $url) : void
+    public function parseCompetition(?string $url) : Competition
     {
         $data = DataLoadService::loadHTMLFromURL($url);
 
         $competition = $this->parser->parse($data);
         $competition->setUrl($url);
         $competition->setUpdateDate();
+
+        return $competition;
+    }
+
+    /**
+     * @param string|null $url
+     *
+     * @throws CompetitionException
+     */
+    public function addCompetitionByURL(?string $url) : void
+    {
+        $competition = $this->parseCompetition($url);
 
         $old_competition = $this->entityManager
             ->getRepository(Competition::class)
@@ -89,5 +104,20 @@ abstract class BaseService
 
         $this->entityManager->persist($competition);
         $this->entityManager->flush();
+    }
+
+    /**
+     * @return string
+     */
+    public function getSiteURL()
+    {
+        if (is_string($this->siteUrl) === false) {
+            $this->siteUrl = $this->supportSite->getUrl();
+            if (substr($this->siteUrl, -1) === URL_SEP) {
+                $this->siteUrl = substr($this->siteUrl, 0, strlen($this->siteUrl) - 1);
+            }
+        }
+
+        return $this->siteUrl;
     }
 }

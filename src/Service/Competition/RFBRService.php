@@ -5,7 +5,7 @@ namespace App\Service\Competition;
 
 use App\Exception\CompetitionException;
 use App\Exception\SupportSiteException;
-use App\Parser\Parser;
+use App\Parser\RFBRParser;
 use App\Service\DataLoadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -17,11 +17,11 @@ class RFBRService extends BaseService
     /**
      * RFBRService constructor.
      *
-     * @param Parser                 $rfbrParser
+     * @param RFBRParser             $rfbrParser
      * @param EntityManagerInterface $entityManagerInterface
      */
     public function __construct(
-        Parser $rfbrParser,
+        RFBRParser $rfbrParser,
         EntityManagerInterface $entityManagerInterface
     ) {
         parent::__construct($rfbrParser, $entityManagerInterface);
@@ -42,14 +42,9 @@ class RFBRService extends BaseService
 
         $competitions_urls = $crawler->filterXPath('.//table/tr/td/a');
 
-        $site_url = $this->supportSite->getUrl();
-        if (substr($site_url, -1) === URL_SEP) {
-            $site_url = substr($site_url, 0, strlen($site_url) - 1);
-        }
-
         foreach ($competitions_urls->getIterator() as $item) {
             $this->addCompetitionByURL(
-                $site_url
+                $this->getSiteURL()
                 . $item->attributes->getNamedItem('href')->nodeValue
             );
         }

@@ -27,17 +27,13 @@ services:
     # please note that last definitions always *replace* previous ones
 
     # data loader
-    App\Service\DataLoadService:
-        autowire: true
-
+    App\Service\DataLoadService: ~
     # add parsers
-    App\Parser\RFBRParser: ~
-
-    App\Parser\Parser: '@App\Parser\RFBRParser'
+    App\Parser\:
+        resource: '../src/Parser'
 
     # services
     App\Sevice\Competition\RFBRService: ~
-
-    App\Sevice\Competition\BaseService: '@App\Sevice\Competition\RFBRService'
+    App\Sevice\Competition\RSFService: ~
 
     App\Sevice\SubscribeService: ~

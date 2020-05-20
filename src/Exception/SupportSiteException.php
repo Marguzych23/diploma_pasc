@@ -12,5 +12,6 @@ class SupportSiteException extends BaseException
     protected array $additionalCodeMessageArray = [
         200 => 'Default support site exception',
         201 => 'Can\'t find data from db',
+        202 => 'Can\'t load data from RSF',
     ];
 }

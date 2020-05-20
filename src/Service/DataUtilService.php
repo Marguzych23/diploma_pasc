@@ -22,4 +22,16 @@ class DataUtilService
         return mb_convert_encoding($data, "UTF-8");
     }
 
+
+    /**
+     * @param $pdfFilename
+     * @param $htmlFilename
+     *
+     * @return string|null
+     */
+    public static function convertPDFToHTML($pdfFilename, $htmlFilename)
+    {
+        return shell_exec('pdftohtml -enc UTF-8 -noframes ' . $pdfFilename . ' ' . $htmlFilename);
+    }
+
 }

@@ -52,4 +52,12 @@ class DataLoadService
     {
         return self::loadFromURL($url);
     }
+
+    /**
+     * @param string|null $filename
+     */
+    public static function loadHTMLFromFile(?string $filename)
+    {
+        return file_get_contents($filename);
+    }
 }

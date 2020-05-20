@@ -4,6 +4,7 @@
 namespace App\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,7 +27,6 @@ class EmailSubscriber
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Industry", mappedBy="emailSubscriber", cascade={"persist"})
-     * @ORM\JoinTable(name="email_subscribers_industries")
      */
     private Collection $industries;
 
@@ -34,6 +34,14 @@ class EmailSubscriber
      * @ORM\Column(type="datetime", nullable=true)
      */
     private ?DateTime $lastSubscribeDate = null;
+
+    /**
+     * EmailSubscriber constructor.
+     */
+    public function __construct()
+    {
+        $this->industries = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -97,5 +105,21 @@ class EmailSubscriber
     public function setLastSubscribeDate(?DateTime $lastSubscribeDate) : void
     {
         $this->lastSubscribeDate = $lastSubscribeDate;
+    }
+
+
+    /**
+     * @param Industry $industry
+     *
+     * @return EmailSubscriber
+     */
+    public function addIndustry(Industry $industry) : self
+    {
+        if (!$this->industries->contains($industry)) {
+            $this->industries[] = $industry;
+            $industry->addEmailSubscriber($this);
+        }
+
+        return $this;
     }
 }

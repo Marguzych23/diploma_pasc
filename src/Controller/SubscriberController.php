@@ -72,7 +72,7 @@ class SubscriberController extends AbstractController
     }
 
     /**
-     * @Route("/ajax/subscribe/emails", name="subscribe_emails")
+     * @Route("/api/subscribe/emails", name="api_subscribe_emails")
      * @param Request          $request
      * @param SubscribeService $subscribeService
      *
@@ -86,8 +86,23 @@ class SubscriberController extends AbstractController
         $message = 'OK';
 
         try {
-            $emails = $request->get('emails', []);
-            $subscribeService->subscribeEmails($emails);
+//            $emails = $request->get('emails', []);
+            $appName = $request->get('app_name', 'default_app');
+            $token   = $request->get('token', '');
+
+            if ($subscribeService->checkApp($appName, $token) === true) {
+                $emails = $request->get('emails', [
+                    [
+                        'email'      => 'zasd@mail.ru',
+                        'industries' => [1, 3, 5],
+                    ],
+                    [
+                        'email'      => 'zas@mail.ru',
+                        'industries' => [1],
+                    ],
+                ]);
+                $subscribeService->subscribeEmails($emails);
+            }
         } catch (\Throwable $e) {
             $status  = false;
             $message = $e->getMessage();
@@ -95,8 +110,7 @@ class SubscriberController extends AbstractController
 
         return $this->json([
             'status'  => $status,
-            'message' => $message,
-            'token'   => $token ?? null,
+            'message' => $message
         ]);
     }
 }

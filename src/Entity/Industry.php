@@ -123,6 +123,21 @@ class Industry
     }
 
     /**
+     * @param EmailSubscriber $emailSubscriber
+     *
+     * @return Industry
+     */
+    public function addEmailSubscriber(EmailSubscriber $emailSubscriber) : self
+    {
+        if (!$this->emailSubscriber->contains($emailSubscriber)) {
+            $this->emailSubscriber[] = $emailSubscriber;
+            $emailSubscriber->addIndustry($this);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection
      */
     public function getSupportSitesIndustries()

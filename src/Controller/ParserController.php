@@ -4,7 +4,6 @@
 namespace App\Controller;
 
 
-use App\Service\Competition\RSFService;
 use App\Service\Competition\ServiceFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,22 +23,26 @@ class ParserController extends AbstractController
         Request $request,
         ServiceFactory $serviceFactory
     ) : Response {
-        $status  = true;
-        $message = 'OK';
+        $status  = false;
+        $message = 'Access denied. Token is wrong.';
 
         try {
-            $type = $request->get('type', 'all');
+            $type  = $request->get('type', 'all');
+            $token = $request->get('token');
 
-            if ($type === 'all') {
-                foreach ($serviceFactory::getAll() as $key => $service) {
+            if ($token === $_ENV['SECRET_ADMIN_KEY']) {
+                if ($type === 'all') {
+                    foreach ($serviceFactory::getAll() as $key => $service) {
+                        $service->run();
+                    }
+                } else {
+                    $service = $serviceFactory::create($type);
                     $service->run();
                 }
-            } else {
-                $service = $serviceFactory::create($type);
-                $service->run();
+                $status  = true;
+                $message = 'OK';
             }
         } catch (Throwable $e) {
-            $status  = false;
             $message = $e->getMessage();
         }
 
@@ -48,34 +51,4 @@ class ParserController extends AbstractController
             'message' => $message,
         ]);
     }
-
-    /**
-     * @Route("/test", name="run_test")
-     * @param Request        $request
-     * @param ServiceFactory $serviceFactory
-     *
-     * @return Response
-     */
-    public function parseTestAction(
-        Request $request,
-        ServiceFactory $serviceFactory
-    ) : Response {
-        $status  = true;
-        $message = 'OK';
-
-        try {
-            $type    = $request->get('type', RSFService::ABBREVIATION);
-            $service = $serviceFactory::create($type);
-            $service->run();
-        } catch (Throwable $e) {
-            $status  = false;
-            $message = $e->getMessage();
-        }
-
-        return $this->json([
-            'status'  => $status,
-            'message' => $message,
-        ]);
-    }
-
 }

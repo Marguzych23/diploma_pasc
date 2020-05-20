@@ -12,5 +12,7 @@ class SubscribeException extends BaseException
     protected array $additionalCodeMessageArray = [
         300 => 'Default subscribe exception',
         310 => 'This app already subscribe',
+        311 => 'App token is wrong',
+        312 => 'Unregistered app',
     ];
 }

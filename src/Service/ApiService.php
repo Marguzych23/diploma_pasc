@@ -5,12 +5,14 @@ namespace App\Service;
 
 
 use App\Entity\ApiSubscriber;
+use App\Entity\Competition;
 use App\Entity\EmailSubscriber;
 use App\Entity\Industry;
 use App\Exception\SubscribeException;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
-class SubscribeService
+class ApiService
 {
     const KEY       = 'HALA_MADRID!';
     const ALGORITHM = 'sha256';
@@ -46,7 +48,7 @@ class SubscribeService
         $apiSubscriber = new ApiSubscriber();
         $apiSubscriber->setName($appName);
         $apiSubscriber->setToken($token);
-        $apiSubscriber->setSubscribeDate(new \DateTime());
+        $apiSubscriber->setSubscribeDate(new DateTime());
 
         $this->apiSubscriber = $apiSubscriber;
 
@@ -94,10 +96,11 @@ class SubscribeService
     }
 
     /**
+     * @param string $appName
      * @param string $email
      * @param array  $industries
      */
-    public function subscribeEmail(string $email, array $industries = [])
+    public function subscribeEmail(string $appName, string $email, array $industries = [])
     {
         $emailSubscriber = $this->entityManager
             ->getRepository(EmailSubscriber::class)
@@ -106,6 +109,7 @@ class SubscribeService
         if (!($emailSubscriber instanceof EmailSubscriber)) {
             $emailSubscriber = new EmailSubscriber();
             $emailSubscriber->setEmail($email);
+            $emailSubscriber->setApiSubscriber($this->getAppData($appName));
         }
 
         foreach ($industries as $industry) {
@@ -122,13 +126,74 @@ class SubscribeService
     }
 
     /**
-     * @param array $emails
+     * @param string $appName
+     * @param array  $emails
      */
-    public function subscribeEmails(array $emails)
+    public function subscribeEmails(string $appName, array $emails)
     {
         foreach ($emails as $item) {
-            $this->subscribeEmail($item['email'], $item['industries'] ?? []);
+            $this->subscribeEmail($appName, $item['email'], $item['industries'] ?? []);
         }
     }
 
+
+    /**
+     * @param string $appName
+     *
+     * @return array
+     */
+    public function getActualCompetitions(string $appName)
+    {
+        $competitions = [];
+
+        $apiSubscriber = $this->getAppData($appName);
+
+        $temp = $this->entityManager
+            ->getRepository(Competition::class)
+            ->getCompetitionsBy($apiSubscriber->getLastGetAllDate());
+        if ($temp !== null) {
+            $competitions = $temp;
+            $apiSubscriber->setLastGetAllDate(new DateTime());
+
+            $this->entityManager->persist($apiSubscriber);
+            $this->entityManager->flush();
+
+            $this->apiSubscriber = $apiSubscriber;
+        }
+
+        return $competitions;
+    }
+
+    /**
+     * @param string $appName
+     *
+     * @return array
+     */
+    public function getNotifyEmails(string $appName)
+    {
+        $emails = [];
+
+        /** @var EmailSubscriber $emailSubscriber */
+        foreach ($this->getAppData($appName)->getEmailSubscribers() as $emailSubscriber) {
+            $emails[$emailSubscriber->getEmail()] = [];
+            /** @var Industry $industry */
+            foreach ($emailSubscriber->getIndustries() as $industry) {
+                /** @var Competition $competition */
+                foreach ($industry->getCompetitions() as $competition) {
+                    if ($emailSubscriber->getLastSubscribeDate() !== null
+                        || ($emailSubscriber->getLastSubscribeDate() !== null
+                            && $competition->getUpdateDate() < $this->getAppData($appName)->getLastGetAllDate())
+                    ) {
+                        continue;
+                    }
+                    $emails[$emailSubscriber->getEmail()][] = [
+                        'id'   => $competition->getId(),
+                        'name' => $competition->getName(),
+                    ];
+                }
+            }
+        }
+
+        return $emails;
+    }
 }

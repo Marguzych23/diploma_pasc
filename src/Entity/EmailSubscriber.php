@@ -36,6 +36,11 @@ class EmailSubscriber
     private ?DateTime $lastSubscribeDate = null;
 
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\ApiSubscriber", inversedBy="emailSubscribers")
+     */
+    private ApiSubscriber $apiSubscriber;
+
+    /**
      * EmailSubscriber constructor.
      */
     public function __construct()
@@ -121,5 +126,21 @@ class EmailSubscriber
         }
 
         return $this;
+    }
+
+    /**
+     * @return ApiSubscriber
+     */
+    public function getApiSubscriber() : ApiSubscriber
+    {
+        return $this->apiSubscriber;
+    }
+
+    /**
+     * @param ApiSubscriber $apiSubscriber
+     */
+    public function setApiSubscriber(ApiSubscriber $apiSubscriber) : void
+    {
+        $this->apiSubscriber = $apiSubscriber;
     }
 }

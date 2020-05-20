@@ -4,6 +4,8 @@
 namespace App\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,6 +39,21 @@ class ApiSubscriber
      * @ORM\Column(type="datetime", nullable=true)
      */
     private ?DateTime $subscribeDate = null;
+
+    /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\EmailSubscriber", mappedBy="apiSubscriber")
+     */
+    private Collection $emailSubscribers;
+
+    /**
+     * ApiSubscriber constructor.
+     */
+    public function __construct()
+    {
+        $this->emailSubscribers = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -116,5 +133,21 @@ class ApiSubscriber
     public function setSubscribeDate(?DateTime $subscribeDate) : void
     {
         $this->subscribeDate = $subscribeDate;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getEmailSubscribers() : Collection
+    {
+        return $this->emailSubscribers;
+    }
+
+    /**
+     * @param Collection $emailSubscribers
+     */
+    public function setEmailSubscribers(Collection $emailSubscribers) : void
+    {
+        $this->emailSubscribers = $emailSubscribers;
     }
 }

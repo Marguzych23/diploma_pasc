@@ -52,6 +52,7 @@ class Industry
     {
         $this->competitions           = new ArrayCollection();
         $this->supportSitesIndustries = new ArrayCollection();
+        $this->emailSubscriber        = new ArrayCollection();
     }
 
     /**

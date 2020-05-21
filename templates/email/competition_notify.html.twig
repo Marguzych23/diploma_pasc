@@ -1,0 +1,10 @@
+<h1>Появились новые конкурсы!</h1>
+
+{% for industry in industries %}
+    <ul>
+        <h3>{{ industry['name'] }}</h3>
+        {% for competition in industry['competitions'] %}
+            <li><a href="{{ competition['url'] }}">{{ competition['name'] }}</a></li>
+        {% endfor %}
+    </ul>
+{% endfor %}

@@ -5,37 +5,40 @@ namespace App\Service;
 
 
 use Doctrine\Common\Collections\Collection;
-use Swift_Mailer;
-use Swift_Message;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 
 class NotificationService
 {
-    protected Swift_Mailer $mailer;
-    protected $template;
+    protected MailerInterface $mailer;
 
-    public function __construct(Swift_Mailer $mailer, ContainerInterface $container)
+    public function __construct(MailerInterface $mailer)
     {
         $this->mailer = $mailer;
-        $this->template = $container->get('templating');
     }
 
-    public function notifyByMailer($username, Collection $industries)
+    /**
+     * @param string $email
+     * @param string $appName
+     * @param array  $industries
+     *
+     * @throws TransportExceptionInterface
+     */
+    public function notifyByMailer(string $email, string $appName, array $industries)
     {
-        $message = (new Swift_Message('Hello Email'))
-            ->setFrom('send@example.com')
-            ->setTo('recipient@example.com')
-            ->setBody(
-                $this->renderView(
-                    'emails/registration.html.twig',
-                    [
-                        'name' => $username,
-                    ]
-                ),
-                'text/html'
-            );
+        $message = (new TemplatedEmail())
+            ->from(new Address('science.grants.ru@gmail.com', $appName))
+            ->to(new Address('recipient@example.com'))
+            ->subject('New Competitions!')
+            ->htmlTemplate('email/competition_notify.html.twig')
+            ->context([
+                'email'      => $email,
+                'industries' => $industries,
+            ]);
 
-
+        $this->mailer->send($message);
     }
 
 }

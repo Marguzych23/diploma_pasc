@@ -107,7 +107,7 @@ class ApiController extends AbstractController
                     $result['competitions'] = $apiService->getCompetitions($appName, $date);
                 }
                 if ($emails !== null) {
-                    $result['emails'] = $apiService->getNotifyEmails($appName);
+                    $result['emails'] = $apiService->getNotifyEmails($appName, $date);
                 }
             }
         } catch (Throwable $e) {

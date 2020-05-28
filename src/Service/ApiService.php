@@ -17,9 +17,9 @@ class ApiService
     const KEY       = 'HALA_MADRID!';
     const ALGORITHM = 'sha256';
 
-    protected EntityManagerInterface   $entityManager;
+    protected EntityManagerInterface $entityManager;
 
-    private ?object                    $apiSubscriber = null;
+    private ?ApiSubscriber $apiSubscriber = null;
 
     /**
      * SubscribeService constructor.
@@ -87,7 +87,7 @@ class ApiService
      */
     public function getAppData(string $appName)
     {
-        if ($this->apiSubscriber === null) {
+        if ($this->apiSubscriber === null || $this->apiSubscriber->getName() !== $appName) {
             $this->apiSubscriber = $this->entityManager
                 ->getRepository(ApiSubscriber::class)->findOneBy(['name' => $appName,]);
         }
@@ -95,13 +95,20 @@ class ApiService
         return $this->apiSubscriber;
     }
 
+    public function getLastNotifyDate(string $appName)
+    {
+        return $this->getAppData($appName)->getLastGetAllDate();
+    }
+
     /**
      * @param string $appName
      * @param string $email
      * @param array  $industries
+     * @param bool   $emailNotify
      */
-    public function subscribeEmail(string $appName, string $email, array $industries = [])
-    {
+    public function subscribeEmail(
+        string $appName, string $email, array $industries = [], bool $emailNotify = false
+    ) {
         $emailSubscriber = $this->entityManager
             ->getRepository(EmailSubscriber::class)
             ->findOneBy(['email' => $email,]);
@@ -121,6 +128,8 @@ class ApiService
             }
         }
 
+        $emailSubscriber->setEmailNotify($emailNotify);
+
         $this->entityManager->persist($emailSubscriber);
         $this->entityManager->flush();
     }
@@ -132,7 +141,11 @@ class ApiService
     public function subscribeEmails(string $appName, array $emails)
     {
         foreach ($emails as $item) {
-            $this->subscribeEmail($appName, $item['email'], $item['industries'] ?? []);
+            $this->subscribeEmail(
+                $appName,
+                $item['email'],
+                $item['industries'] ?? [],
+                $item['email_notify'] ?? false);
         }
     }
 
@@ -149,9 +162,11 @@ class ApiService
 
         $apiSubscriber = $this->getAppData($appName);
 
+        $date = $date ?? $apiSubscriber->getLastGetAllDate() ?? (new DateTime())->setTimestamp(0);
+
         $temp = $this->entityManager
             ->getRepository(Competition::class)
-            ->getCompetitionsBy($date ?? $apiSubscriber->getLastGetAllDate());
+            ->getCompetitionsBy($date);
         if ($temp !== null) {
             $competitions = $temp;
             $apiSubscriber->setLastGetAllDate(new DateTime());
@@ -166,11 +181,13 @@ class ApiService
     }
 
     /**
-     * @param string $appName
+     * @param string   $appName
+     *
+     * @param DateTime $date
      *
      * @return array
      */
-    public function getNotifyEmails(string $appName)
+    public function getNotifyEmails(string $appName, DateTime $date)
     {
         $emails = [];
 
@@ -181,18 +198,17 @@ class ApiService
             foreach ($emailSubscriber->getIndustries() as $industry) {
                 /** @var Competition $competition */
                 foreach ($industry->getCompetitions() as $competition) {
-                    if ($emailSubscriber->getLastSubscribeDate() !== null
-                        || ($emailSubscriber->getLastSubscribeDate() !== null
-                            && $competition->getUpdateDate() < $this->getAppData($appName)->getLastGetAllDate())
-                    ) {
-                        continue;
+                    if ($competition->getUpdateDate() > $date) {
+                        $emails[$emailSubscriber->getEmail()][] = [
+                            'id'   => $competition->getId(),
+                            'name' => $competition->getName(),
+                        ];
                     }
-                    $emails[$emailSubscriber->getEmail()][] = [
-                        'id'   => $competition->getId(),
-                        'name' => $competition->getName(),
-                    ];
                 }
             }
+            $emailSubscriber->setLastNotifyDate(new DateTime());
+            $this->entityManager->persist($emailSubscriber);
+            $this->entityManager->flush();
         }
 
         return $emails;

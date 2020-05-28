@@ -33,7 +33,19 @@ class EmailSubscriber
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?DateTime $lastSubscribeDate = null;
+    private ?DateTime $lastNotifyDate = null;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private bool $emailNotify = false;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?DateTime $lastEmailNotifyDate = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\ApiSubscriber", inversedBy="emailSubscribers")
@@ -97,23 +109,6 @@ class EmailSubscriber
     }
 
     /**
-     * @return DateTime|null
-     */
-    public function getLastSubscribeDate() : ?DateTime
-    {
-        return $this->lastSubscribeDate;
-    }
-
-    /**
-     * @param DateTime|null $lastSubscribeDate
-     */
-    public function setLastSubscribeDate(?DateTime $lastSubscribeDate) : void
-    {
-        $this->lastSubscribeDate = $lastSubscribeDate;
-    }
-
-
-    /**
      * @param Industry $industry
      *
      * @return EmailSubscriber
@@ -142,5 +137,53 @@ class EmailSubscriber
     public function setApiSubscriber(ApiSubscriber $apiSubscriber) : void
     {
         $this->apiSubscriber = $apiSubscriber;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmailNotify() : bool
+    {
+        return $this->emailNotify;
+    }
+
+    /**
+     * @param bool $emailNotify
+     */
+    public function setEmailNotify(bool $emailNotify) : void
+    {
+        $this->emailNotify = $emailNotify;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getLastEmailNotifyDate() : ?DateTime
+    {
+        return $this->lastEmailNotifyDate;
+    }
+
+    /**
+     * @param DateTime|null $lastEmailNotifyDate
+     */
+    public function setLastEmailNotifyDate(?DateTime $lastEmailNotifyDate) : void
+    {
+        $this->lastEmailNotifyDate = $lastEmailNotifyDate;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getLastNotifyDate() : ?DateTime
+    {
+        return $this->lastNotifyDate;
+    }
+
+    /**
+     * @param DateTime|null $lastNotifyDate
+     */
+    public function setLastNotifyDate(?DateTime $lastNotifyDate) : void
+    {
+        $this->lastNotifyDate = $lastNotifyDate;
     }
 }

@@ -68,3 +68,7 @@ services:
         arguments: [~, App\Entity\SupportSitesIndustry, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: SupportSitesIndustry }
+
+    mailer:
+        alias: fos_user.mailer.noop
+        public: true

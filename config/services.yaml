@@ -37,3 +37,34 @@ services:
     App\Sevice\Competition\RSFService: ~
 
     App\Sevice\SubscribeService: ~
+
+    # admin
+    App\Admin\ApiSubscriberAdmin:
+        arguments: [~, App\Entity\ApiSubscriber, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: ApiSubscriber }
+
+    App\Admin\CompetitionAdmin:
+        arguments: [~, App\Entity\Competition, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Competition }
+
+    App\Admin\EmailSubscriberAdmin:
+        arguments: [~, App\Entity\EmailSubscriber, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: EmailSubscriber }
+
+    App\Admin\IndustryAdmin:
+        arguments: [~, App\Entity\Industry, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Industry }
+
+    App\Admin\SupportSiteAdmin:
+        arguments: [~, App\Entity\SupportSite, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: SupportSite }
+
+    App\Admin\SupportSitesIndustryAdmin:
+        arguments: [~, App\Entity\SupportSitesIndustry, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: SupportSitesIndustry }

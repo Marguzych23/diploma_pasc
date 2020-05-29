@@ -11,23 +11,25 @@
     "ext-dom": "*",
     "ext-iconv": "*",
     "ext-json": "*",
-    "doctrine/doctrine-migrations-bundle": "^2.1",
-    "symfony/asset": "5.0.*",
-    "symfony/console": "5.0.*",
-    "symfony/dom-crawler": "5.0.*",
-    "symfony/dotenv": "5.0.*",
+    "sonata-project/admin-bundle": "^3.67",
+    "sonata-project/doctrine-orm-admin-bundle": "^3.17",
+    "symfony/asset": "^4.3",
+    "symfony/console": "*",
+    "symfony/dom-crawler": "*",
+    "symfony/dotenv": "*",
     "symfony/flex": "^1.3.1",
-    "symfony/framework-bundle": "5.0.*",
-    "symfony/google-mailer": "5.0.*",
-    "symfony/mailer": "5.0.*",
+    "symfony/framework-bundle": "*",
+    "symfony/google-mailer": "*",
+    "symfony/mailer": "*",
     "symfony/orm-pack": "^1.0",
     "symfony/serializer": "^4.4|^5.0",
     "symfony/swiftmailer-bundle": "^3.4",
-    "symfony/twig-bundle": "5.0.*",
-    "symfony/yaml": "5.0.*"
+    "symfony/twig-bundle": "*",
+    "symfony/yaml": "*",
+    "twig/twig": "^2.12"
   },
   "require-dev": {
-    "symfony/maker-bundle": "^1.14"
+    "symfony/maker-bundle": "^1.18"
   },
   "config": {
     "preferred-install": {
@@ -49,7 +51,6 @@
     "paragonie/random_compat": "2.*",
     "symfony/polyfill-ctype": "*",
     "symfony/polyfill-iconv": "*",
-    "symfony/polyfill-php72": "*",
     "symfony/polyfill-php71": "*",
     "symfony/polyfill-php70": "*",
     "symfony/polyfill-php56": "*"
@@ -72,7 +73,7 @@
   "extra": {
     "symfony": {
       "allow-contrib": false,
-      "require": "5.0.*"
+      "require": "4.4.*"
     }
   }
 }

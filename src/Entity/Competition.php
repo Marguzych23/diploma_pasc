@@ -53,7 +53,7 @@ class Competition implements JsonSerializable
     private ?DateTime $updateDate = null;
 
     /**
-     * Competition constructor.
+     * CompetitionAdmin constructor.
      */
     public function __construct()
     {

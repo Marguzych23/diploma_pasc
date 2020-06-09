@@ -42,32 +42,32 @@ services:
     App\Admin\ApiSubscriberAdmin:
         arguments: [~, App\Entity\ApiSubscriber, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: ApiSubscriber }
+            - { name: sonata.admin, manager_type: orm, label: ApiSubscriber, group: API }
 
     App\Admin\CompetitionAdmin:
         arguments: [~, App\Entity\Competition, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: Competition }
+            - { name: sonata.admin, manager_type: orm, label: Competition, group: API }
 
     App\Admin\EmailSubscriberAdmin:
         arguments: [~, App\Entity\EmailSubscriber, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: EmailSubscriber }
+            - { name: sonata.admin, manager_type: orm, label: EmailSubscriber, group: API }
 
     App\Admin\IndustryAdmin:
         arguments: [~, App\Entity\Industry, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: Industry }
+            - { name: sonata.admin, manager_type: orm, label: Industry, group: API }
 
     App\Admin\SupportSiteAdmin:
         arguments: [~, App\Entity\SupportSite, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: SupportSite }
+            - { name: sonata.admin, manager_type: orm, label: SupportSite, group: API }
 
     App\Admin\SupportSitesIndustryAdmin:
         arguments: [~, App\Entity\SupportSitesIndustry, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: SupportSitesIndustry }
+            - { name: sonata.admin, manager_type: orm, label: SupportSitesIndustry, group: API }
 
     mailer:
         alias: fos_user.mailer.noop

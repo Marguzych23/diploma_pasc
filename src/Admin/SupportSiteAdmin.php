@@ -18,7 +18,7 @@ class SupportSiteAdmin extends AbstractAdmin
         $formMapper->add('name', TextType::class);
         $formMapper->add('abbreviation', TextType::class);
         $formMapper->add('url', TextType::class);
-        $formMapper->add('abbreviation_page_url', TextType::class);
+        $formMapper->add('competitions_page_url', TextType::class);
 //        $formMapper->add('supportSitesIndustries', TextType::class);
     }
 
@@ -28,7 +28,7 @@ class SupportSiteAdmin extends AbstractAdmin
         $datagridMapper->add('name');
         $datagridMapper->add('abbreviation');
         $datagridMapper->add('url');
-        $datagridMapper->add('abbreviation_page_url');
+        $datagridMapper->add('competitions_page_url');
 //        $datagridMapper->add('supportSitesIndustries');
     }
 
@@ -38,7 +38,7 @@ class SupportSiteAdmin extends AbstractAdmin
         $listMapper->add('name');
         $listMapper->add('abbreviation');
         $listMapper->add('url');
-        $listMapper->add('abbreviation_page_url');
+        $listMapper->add('competitions_page_url');
 //        $listMapper->add('supportSitesIndustries');
     }
 }

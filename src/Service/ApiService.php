@@ -52,6 +52,9 @@ class ApiService
 
         $this->apiSubscriber = $apiSubscriber;
 
+        $this->entityManager->persist($apiSubscriber);
+        $this->entityManager->flush();
+
         return $token;
     }
 

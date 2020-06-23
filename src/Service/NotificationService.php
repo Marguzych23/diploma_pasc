@@ -44,7 +44,7 @@ class NotificationService
             $this->entityManager
                 ->getRepository(EmailSubscriber::class)
                 ->findBy([
-                    'email_notify' => true,
+                    'emailNotify' => true,
                 ])
             as $emailSubscriber
         ) {

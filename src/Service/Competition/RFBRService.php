@@ -32,8 +32,10 @@ class RFBRService extends BaseService
      * @throws SupportSiteException
      * @throws CompetitionException
      */
-    public function run() : void
+    public function run() : array
     {
+        $result = [];
+
         $this->initRun();
         $content = DataLoadService::loadFromURL($this->supportSite->getCompetitionsPageUrl());
 
@@ -43,10 +45,18 @@ class RFBRService extends BaseService
         $competitions_urls = $crawler->filterXPath('.//table/tr/td/a');
 
         foreach ($competitions_urls->getIterator() as $item) {
-            $this->addCompetitionByURL(
-                $this->getSiteURL()
-                . $item->attributes->getNamedItem('href')->nodeValue
-            );
+            try {
+                $this->addCompetitionByURL(
+                    $this->getSiteURL()
+                    . $item->attributes->getNamedItem('href')->nodeValue
+                );
+                $result[] = $this->getSiteURL()
+                    . $item->attributes->getNamedItem('href')->nodeValue . ' is parsed';
+            } catch (\Throwable $exception) {
+                $result[] = ($item->attributes->getNamedItem('href')->nodeValue ?? '') . ' is NOT parsed';
+            }
         }
+
+        return $result;
     }
 }

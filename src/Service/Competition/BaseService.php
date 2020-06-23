@@ -40,9 +40,9 @@ abstract class BaseService
     /**
      * Обязательно вызвать initRun()
      *
-     * @return void
+     * @return array $result
      */
-    abstract public function run() : void;
+    abstract public function run() : array;
 
     /**
      * @throws SupportSiteException

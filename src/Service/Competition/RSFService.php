@@ -34,8 +34,10 @@ class RSFService extends BaseService
      * @throws SupportSiteException
      * @throws CompetitionException
      */
-    public function run() : void
+    public function run() : array
     {
+        $result = [];
+
         $this->initRun();
         $content = DataLoadService::loadFromURL($this->supportSite->getCompetitionsPageUrl());
 //        all competitions
@@ -63,10 +65,18 @@ class RSFService extends BaseService
             $nodeCrawler->addNode($DOMNode);
             $this->parser->setDataAboutCompetition($nodeCrawler);
 
-            $this->addCompetitionByURL(
-                $this->getSiteURL() . $this->parser->getCompetitionPath()
-            );
+            try {
+                $this->addCompetitionByURL(
+                    $this->getSiteURL() . $this->parser->getCompetitionPath()
+                );
+                $result[] = $this->getSiteURL()
+                    . $this->parser->getCompetitionPath() . ' is parsed';
+            } catch (\Throwable $exception) {
+                $result[] = ($this->parser->getCompetitionPath() ?? '') . ' is NOT parsed';
+            }
         }
+
+        return $result;
     }
 
     /**

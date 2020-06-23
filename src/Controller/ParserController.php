@@ -38,13 +38,25 @@ class ParserController extends AbstractController
             if ($token === $_ENV['SECRET_ADMIN_KEY']) {
                 if ($type === 'all') {
                     foreach ($serviceFactory::getAll() as $key => $service) {
-                        $service->run();
-                        $message[] = $key . ' is parsed';
+                        try {
+                            $message   = array_merge($message,
+                                $service->run());
+                            $message[] = $key . ' is parsed';
+                        } catch (\Throwable $exception) {
+                            $message[] = $key . ' is NOT parsed: ' . $exception->getMessage();
+                        }
                     }
+                } elseif ($type === 'none') {
+//                todo
                 } else {
-                    $service = $serviceFactory::create($type);
-                    $service->run();
-                    $message[] = $type . ' is parsed';
+                    try {
+                        $service   = $serviceFactory::create($type);
+                        $message   = array_merge($message,
+                            $service->run());
+                        $message[] = $type . ' is parsed';
+                    } catch (\Throwable $exception) {
+                        $message[] = $type . ' is NOT parsed: ' . $exception->getMessage();
+                    }
                 }
 
                 if ($notifyIsNeed) {
